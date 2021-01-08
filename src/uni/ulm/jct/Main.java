@@ -2,6 +2,7 @@ package uni.ulm.jct;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.SQLOutput;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -17,33 +18,11 @@ public class Main {
 	    scanner = new Scanner(System.in);
 	    stop = false;
 
-	    game.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                GameLogic.GameState current = (GameLogic.GameState) evt.getNewValue();
-                if(evt.getPropertyName().equals("GameState") && evt.getNewValue().equals(GameLogic.GameState.ShowWinner))
-                    stop = true;
-                switch (current){
-                    case Opener -> opener();
-
-                    case Swap2Question -> swap2Question();
-                    /*
-                    case AWNSER_A -> awnserA();
-                    case AWNSER_B -> awnserB();
-                    case AWNSER_C -> awnserC();
-                    case COLOR_PICK -> pick();
-                    case NORMAL -> normal();
-
-                     */
-
-                }
-            }
-        });
-        opener();
+        playRandomGame();
 
     }
 
-    private void playRandomGame(){
+    private static void playRandomGame(){
         GameLogic game = new GameLogic();
         game.putStone(Field.Black, 1, 1);
         game.putStone(Field.Black, 1, 2);
@@ -51,9 +30,10 @@ public class Main {
         //game.putStone(FieldState.WHITE, 6, 6);
         game.makeDecision("a");
         game.putStone(Field.White, 5, 6);
+        System.out.println(game.getStringRepresentation());
 
         Field c = Field.White;
-        while(!stop){
+        while(!game.getGameState().equals(GameLogic.GameState.ShowWinner)){
             int x = 0;
             int y = 0;
             c = (c.equals(Field.White) ? Field.Black : Field.White);
@@ -64,6 +44,7 @@ public class Main {
         }
 
         System.out.println(game.getStringRepresentation());
+        System.out.println(game.getCurrentPlayer());
     }
 
     private static void opener(){

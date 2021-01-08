@@ -63,12 +63,11 @@ public class GameLogic {
         ShowWinner {
             @Override
             public String getPlayer() {
-                return prev.getPlayer();
+                return "Winner";
             }
         };
 
         public abstract String getPlayer();
-        public GameState prev = null;
     }
 
 
@@ -76,7 +75,8 @@ public class GameLogic {
 
     private static final int BOARD_SIZE = 15;
     private Board board;
-    private GameState myState;
+    private GameState myState = null;
+    private GameState prev = null;
     private String player1Color;
     private String player2Color;
     // 1 => Palyer 1, 2 => Player2
@@ -281,10 +281,14 @@ public class GameLogic {
         return myState;
     }
 
+    public String getCurrentPlayer(){
+        return this.getGameState().getPlayer();
+    }
+
     public void setGameState(GameState gameState) {
         pcs.firePropertyChange("GameState", getGameState(), gameState);
-        this.myState.prev = gameState;
         this.myState = gameState;
+        this.prev = gameState;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
