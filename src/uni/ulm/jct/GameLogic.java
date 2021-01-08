@@ -4,27 +4,76 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class GameLogic {
+    public static final String PLAYER1 = "Player1";
+    public static final String PLAYER2 = "Player2";
+
+    public static final String BLACK = "Black";
+    public static final String WHITE = "White";
+
 
     public enum GameState {
-        OPENER,
-        AWNSER_OPENER,
-        AWNSER_A,
-        AWNSER_B,
-        AWNSER_C,
-        COLOR_PICK,
-        NORMAL,
-        SHOW_WINNER
+        Opener{
+            @Override
+            public String getPlayer() {
+                return PLAYER1;
+            }
+        },
+        Swap2Question{
+            @Override
+            public String getPlayer() {
+                return PLAYER2;
+            }
+        },
+        AwnserA{
+            @Override
+            public String getPlayer() {
+                return PLAYER2;
+            }
+        },
+        AwnserB {
+            @Override
+            public String getPlayer() {
+                return PLAYER2;
+            }
+        },
+        AwnserC {
+            @Override
+            public String getPlayer() {
+                return PLAYER2;
+            }
+        },
+        ColorPick {
+            @Override
+            public String getPlayer() {
+                return PLAYER1;
+            }
+        },
+        TurnPlayer1 {
+            @Override
+            public String getPlayer() {
+                return PLAYER1;
+            }
+        },
+        TurnPlayer2 {
+            @Override
+            public String getPlayer() {
+                return PLAYER2;
+            }
+        };
+
+        public abstract String getPlayer();
     }
+
 
     private PropertyChangeSupport pcs;
 
     private static final int BOARD_SIZE = 15;
     private FieldState[][] board;
-    private GameState gameState;
-    private String player1;
-    private String player2;
+    private GameState myState;
+    private String player1Color;
+    private String player2Color;
     // 1 => Palyer 1, 2 => Player2
-    private int currentPlayer;
+    private String currentPlayer;
 
     private int whiteCounter;
     private int blackCoutner;
@@ -38,10 +87,10 @@ public class GameLogic {
                 this.board[x][y] = FieldState.EMTPY;
             }
         }
-        this.player1 = "black";
-        this.player2 = "white";
-        this.setGameState(GameState.OPENER);
-        this.currentPlayer = 1;
+        this.player1Color = BLACK;
+        this.player2Color = WHITE;
+        this.setGameState(GameState.Opener);
+        this.currentPlayer = PLAYER1;
         this.blackCoutner = 0;
         this.whiteCounter = 0;
     }
@@ -52,7 +101,7 @@ public class GameLogic {
         }
 
         switch(this.getGameState()){
-            case OPENER:
+            case Opener:
                 if(color.equals(FieldState.WHITE) && this.whiteCounter <= 1 ||
                     color.equals(FieldState.BLACK) && this.blackCoutner <= 2)
                 {
@@ -69,7 +118,7 @@ public class GameLogic {
                     return false;
                 }
                 break;
-            case AWNSER_A:
+            case AwnserA:
                 if(color.equals(FieldState.WHITE)){
                     this.board[x][y] = color;
                     finishTurn();
@@ -77,7 +126,7 @@ public class GameLogic {
                     return false;
                 }
                 break;
-            case AWNSER_C:
+            case AwnserC:
                 if(color.equals(FieldState.WHITE) && this.whiteCounter <= 1 ||
                         color.equals(FieldState.BLACK) && this.blackCoutner <= 1)
                 {
@@ -94,7 +143,7 @@ public class GameLogic {
                     return false;
                 }
                 break;
-            case NORMAL:
+            case TurnPlayer1:
                 this.board[x][y] = color;
                 finishTurn();
                 break;
@@ -107,17 +156,17 @@ public class GameLogic {
 
     private void finishTurn(){
         switch (this.getGameState()){
-            case OPENER:
-                this.setGameState(GameState.AWNSER_OPENER);
+            case Opener:
+                this.setGameState(GameState.Swap2Question);
                 break;
-            case AWNSER_A:
-            case AWNSER_B:
-                this.setGameState(GameState.NORMAL);
+            case AwnserA:
+            case AwnserB:
+                this.setGameState(GameState.TurnPlayer1);
                 break;
-            case AWNSER_C:
-                this.setGameState(GameState.COLOR_PICK);
+            case AwnserC:
+                this.setGameState(GameState.ColorPick);
                 break;
-            case NORMAL:
+            case TurnPlayer1:
                 if(playerHasWon()){
                     this.setGameState(GameState.SHOW_WINNER);
                     System.out.println("player " + this.currentPlayer + " won!");
@@ -127,7 +176,7 @@ public class GameLogic {
                 System.err.println("Unhandelt state change!");
                 break;
         }
-        this.currentPlayer = (this.currentPlayer == 1) ? 2 : 1;
+        this.currentPlayer = (this.currentPlayer.equals(PLAYER1)) ? PLAYER2 : PLAYER1;
         this.blackCoutner = 0;
         this.whiteCounter = 0;
         // System.out.println("Turn finished, " + ((currentPlayer == 1) ? "Player 1" : "Player 2") + " is now playing, mode " + getGameState());
@@ -186,28 +235,28 @@ public class GameLogic {
     }
 
     public boolean makeDecision(String option){
-        if(this.getGameState().equals(GameState.AWNSER_OPENER)){
+        if(this.getGameState().equals(GameState.Swap2Question)){
             if(option.equals("a")){
-                this.setGameState(GameState.AWNSER_A);
+                this.setGameState(GameState.AwnserA);
             }else if(option.equals("b")){
-                this.player1 = "black";
-                this.player2 = "white";
-                this.setGameState(GameState.AWNSER_B);
+                this.player1Color = "black";
+                this.player2Color = "white";
+                this.setGameState(GameState.AwnserB);
             }else if(option.equals("c")){
-                this.setGameState(GameState.AWNSER_C);
+                this.setGameState(GameState.AwnserC);
             }else{
                 System.err.println("Option not avaible");
                 return false;
             }
-        }else if(this.getGameState().equals(GameState.COLOR_PICK)){
+        }else if(this.getGameState().equals(GameState.ColorPick)){
             if(option.equals("a")){
                 // dont change color
-                this.setGameState(GameState.NORMAL);
+                this.setGameState(GameState.TurnPlayer1);
             }else if(option.equals("b")){
                 // change color
-                this.player1 = "black";
-                this.player2 = "white";
-                this.setGameState(GameState.NORMAL);
+                this.player1Color = "black";
+                this.player2Color = "white";
+                this.setGameState(GameState.TurnPlayer1);
             }else{
                 System.err.println("Option not avaible");
                 return false;
@@ -218,12 +267,12 @@ public class GameLogic {
 
 
     public GameState getGameState() {
-        return gameState;
+        return myState;
     }
 
     public void setGameState(GameState gameState) {
         pcs.firePropertyChange("GameState", getGameState(), gameState);
-        this.gameState = gameState;
+        this.myState = gameState;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
