@@ -21,12 +21,12 @@ public class Main {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 GameLogic.GameState current = (GameLogic.GameState) evt.getNewValue();
-                if(evt.getPropertyName().equals("GameState") && evt.getNewValue().equals(GameLogic.GameState.SHOW_WINNER))
+                if(evt.getPropertyName().equals("GameState") && evt.getNewValue().equals(GameLogic.GameState.ShowWinner))
                     stop = true;
                 switch (current){
-                    case OPENER -> opener();
+                    case Opener -> opener();
 
-                    case AWNSER_OPENER -> awnserOpener();
+                    case Swap2Question -> swap2Question();
                     /*
                     case AWNSER_A -> awnserA();
                     case AWNSER_B -> awnserB();
@@ -41,19 +41,22 @@ public class Main {
         });
         opener();
 
-	    /*
-	    game.putStone(FieldState.BLACK, 1, 1);
-        game.putStone(FieldState.BLACK, 1, 2);
-        game.putStone(FieldState.WHITE, 5, 5);
+    }
+
+    private void playRandomGame(){
+        GameLogic game = new GameLogic();
+        game.putStone(Field.Black, 1, 1);
+        game.putStone(Field.Black, 1, 2);
+        game.putStone(Field.White, 5, 5);
         //game.putStone(FieldState.WHITE, 6, 6);
         game.makeDecision("a");
-        game.putStone(FieldState.WHITE, 5, 6);
+        game.putStone(Field.White, 5, 6);
 
-        FieldState c = FieldState.WHITE;
+        Field c = Field.White;
         while(!stop){
             int x = 0;
             int y = 0;
-            c = (c.equals(FieldState.WHITE) ? FieldState.BLACK : FieldState.WHITE);
+            c = (c.equals(Field.White) ? Field.Black : Field.White);
             do{
                 x = (int)(Math.random() * 15);
                 y = (int)(Math.random() * 15);
@@ -61,9 +64,6 @@ public class Main {
         }
 
         System.out.println(game.getStringRepresentation());
-
-	     */
-
     }
 
     private static void opener(){
@@ -78,7 +78,7 @@ public class Main {
         System.out.println("Term finished");
     }
 
-    private static void awnserOpener(){
+    private static void swap2Question(){
         System.out.println("You can choose an option from a, b or c");
         String awnser = scanner.nextLine().strip();
         game.makeDecision(awnser);
@@ -92,7 +92,7 @@ public class Main {
             String[] cords = line.split(",");
             int x = Integer.parseInt(cords[0]);
             int y = Integer.parseInt(cords[1]);
-            valid = game.putStone(FieldState.BLACK, x, y);
+            valid = game.putStone(Field.Black, x, y);
         }
     }
 
@@ -104,7 +104,7 @@ public class Main {
             String[] cords = line.split(",");
             int x = Integer.parseInt(cords[0]);
             int y = Integer.parseInt(cords[1]);
-            valid = game.putStone(FieldState.WHITE, x, y);
+            valid = game.putStone(Field.White, x, y);
         }
     }
 }

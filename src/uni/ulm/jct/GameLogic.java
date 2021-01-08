@@ -75,7 +75,7 @@ public class GameLogic {
     private PropertyChangeSupport pcs;
 
     private static final int BOARD_SIZE = 15;
-    private FieldState[][] board;
+    private Board board;
     private GameState myState;
     private String player1Color;
     private String player2Color;
@@ -88,12 +88,7 @@ public class GameLogic {
 
     public GameLogic(){
         this.pcs = new PropertyChangeSupport(this);
-        this.board = new FieldState[BOARD_SIZE][BOARD_SIZE];
-        for(int x = 0; x < BOARD_SIZE; x++){
-            for(int y = 0; y < BOARD_SIZE; y++){
-                this.board[x][y] = FieldState.EMTPY;
-            }
-        }
+        this.board = new Board(BOARD_SIZE);
         this.player1Color = BLACK;
         this.player2Color = WHITE;
         this.setGameState(GameState.Opener);
@@ -102,18 +97,18 @@ public class GameLogic {
         this.whiteCounter = 0;
     }
 
-    public boolean putStone(FieldState color, int x, int y){
-        if (this.board[x][y] != FieldState.EMTPY){
+    public boolean putStone(Field color, int x, int y){
+        if (this.board.getField(x,y) != Field.Empty){
             return false;
         }
 
         switch(this.getGameState()){
             case Opener:
-                if(color.equals(FieldState.WHITE) && this.whiteCounter <= 1 ||
-                    color.equals(FieldState.BLACK) && this.blackCoutner <= 2)
+                if(color.equals(Field.White) && this.whiteCounter <= 1 ||
+                    color.equals(Field.Black) && this.blackCoutner <= 2)
                 {
-                    this.board[x][y] = color;
-                    if(color.equals(FieldState.WHITE)){
+                    this.board.setField(color, x, y);
+                    if(color.equals(Field.White)){
                         this.whiteCounter++;
                     }else{
                         this.blackCoutner++;
@@ -126,23 +121,23 @@ public class GameLogic {
                 }
                 break;
             case AwnserA:
-                if(color.equals(FieldState.WHITE)){
-                    this.board[x][y] = color;
+                if(color.equals(Field.White)){
+                    this.board.setField(color, x, y);
                     finishTurn();
                 }else{
                     return false;
                 }
                 break;
             case AwnserC:
-                if(color.equals(FieldState.WHITE) && this.whiteCounter <= 1 ||
-                        color.equals(FieldState.BLACK) && this.blackCoutner <= 1)
+                if(color.equals(Field.White) && this.whiteCounter <= 1 ||
+                        color.equals(Field.Black) && this.blackCoutner <= 1)
                 {
-                    if(color.equals(FieldState.WHITE)){
+                    if(color.equals(Field.White)){
                         this.whiteCounter++;
                     }else{
                         this.blackCoutner++;
                     }
-                    this.board[x][y] = color;
+                    this.board.setField(color, x, y);
                     if(this.blackCoutner + this.whiteCounter == 2){
                         finishTurn();
                     }
@@ -152,7 +147,7 @@ public class GameLogic {
                 break;
             case TurnPlayer1:
             case TurnPlayer2:
-                this.board[x][y] = color;
+                this.board.setField(color, x, y);
                 finishTurn();
                 break;
             default:
@@ -204,14 +199,14 @@ public class GameLogic {
         String out = "";
         for(int x = 0; x < BOARD_SIZE; x++){
             for (int y = 0; y < BOARD_SIZE; y++) {
-                switch (board[x][y]){
-                    case WHITE:
+                switch (board.getField(x, y)){
+                    case White:
                         out += "o";
                         break;
-                    case BLACK:
+                    case Black:
                         out += "x";
                         break;
-                    case EMTPY:
+                    case Empty:
                         out += ".";
                         break;
                 }
@@ -226,8 +221,8 @@ public class GameLogic {
             if(option.equals("a")){
                 this.setGameState(GameState.AwnserA);
             }else if(option.equals("b")){
-                this.player1Color = "black";
-                this.player2Color = "white";
+                this.player1Color = BLACK;
+                this.player2Color = WHITE;
                 this.setGameState(GameState.AwnserB);
             }else if(option.equals("c")){
                 this.setGameState(GameState.AwnserC);
@@ -241,8 +236,8 @@ public class GameLogic {
                 this.setGameState(GameState.TurnPlayer1);
             }else if(option.equals(BLACK)){
                 // change color
-                this.player1Color = "black";
-                this.player2Color = "white";
+                this.player1Color = BLACK;
+                this.player2Color = WHITE;
                 this.setGameState(GameState.TurnPlayer1);
             }else{
                 System.err.println("Option not avaible");
@@ -256,9 +251,9 @@ public class GameLogic {
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
                 // traverse every field
-                FieldState c = board[x][y];
+                Field c = board.getField(x, y);
                 // if we have a stone, check if its the start of a five row
-                if(c.equals(FieldState.EMTPY)) continue;
+                if(c.equals(Field.Empty)) continue;
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         if(dx == 0 && dy == 0) continue;
@@ -270,14 +265,14 @@ public class GameLogic {
         return false;
     }
 
-    private boolean _fiveInARow(FieldState color, int x, int y, int dx, int dy, int n){
+    private boolean _fiveInARow(Field color, int x, int y, int dx, int dy, int n){
         if(n == 5) return true;
         x = x+dx;
         y = y+dy;
         n = n+1;
         if(x >= BOARD_SIZE || x < 0 || y >= BOARD_SIZE || y < 0)
             return false;
-        if(!board[x][y].equals(color)) return false;
+        if(!board.getField(x, y).equals(color)) return false;
         return _fiveInARow(color, x, y, dx, dy, n);
     }
 
