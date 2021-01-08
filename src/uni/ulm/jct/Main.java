@@ -139,36 +139,27 @@ public class Main {
     }
 
     private static void placeBlackStone(){
+        placeStone(Field.Black);
+    }
+
+    private static void placeWhiteStone(){
+        placeStone(Field.White);
+    }
+
+    private static void placeStone(Field c){
         boolean valid = false;
         while (!valid){
             try{
-                System.out.print("Input Cords (<x>, <y>): ");
+                System.out.print("Place a " + c + " Stone (<x>, <y>): ");
                 String line = scanner.nextLine();
                 String[] cords = line.split(",");
                 int x = Integer.parseInt(cords[0]);
                 int y = Integer.parseInt(cords[1]);
-                valid = game.putStone(Field.Black, x, y);
+                valid = game.putStone(c, x, y);
                 if(!valid) System.out.println("A stone is already occupaing this place!");
             }catch(NumberFormatException e){
                 System.out.println("Wrong Format! (Example input: 1,1)");
             }
         }
-    }
-
-    private static void placeWhiteStone(){
-        boolean valid = false;
-        while (!valid){
-            try{
-                System.out.print("Input Cords (<x>, <y>): ");
-                String line = scanner.nextLine();
-                String[] cords = line.split(",");
-                int x = Integer.parseInt(cords[0]);
-                int y = Integer.parseInt(cords[1]);
-                valid = game.putStone(Field.White, x, y);
-                if(!valid) System.out.println("A stone is already occupaing this place!");
-            }catch(NumberFormatException e){
-                System.out.println("Wrong Format! (Example input: 1,1)");
-            }
-       }
     }
 }
