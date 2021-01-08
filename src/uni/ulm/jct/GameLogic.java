@@ -59,9 +59,16 @@ public class GameLogic {
             public String getPlayer() {
                 return PLAYER2;
             }
+        },
+        ShowWinner {
+            @Override
+            public String getPlayer() {
+                return prev.getPlayer();
+            }
         };
 
         public abstract String getPlayer();
+        public GameState prev = null;
     }
 
 
@@ -144,6 +151,7 @@ public class GameLogic {
                 }
                 break;
             case TurnPlayer1:
+            case TurnPlayer2:
                 this.board[x][y] = color;
                 finishTurn();
                 break;
@@ -168,8 +176,16 @@ public class GameLogic {
                 break;
             case TurnPlayer1:
                 if(playerHasWon()){
-                    this.setGameState(GameState.SHOW_WINNER);
-                    System.out.println("player " + this.currentPlayer + " won!");
+                    this.setGameState(GameState.ShowWinner);
+                }else{
+                    this.setGameState(GameState.TurnPlayer2);
+                }
+                break;
+            case TurnPlayer2:
+                if(playerHasWon()){
+                    this.setGameState(GameState.ShowWinner);
+                }else{
+                    this.setGameState(GameState.TurnPlayer1);
                 }
                 break;
             default:
@@ -182,35 +198,6 @@ public class GameLogic {
         // System.out.println("Turn finished, " + ((currentPlayer == 1) ? "Player 1" : "Player 2") + " is now playing, mode " + getGameState());
 
 
-    }
-
-    private boolean playerHasWon() {
-        for (int x = 0; x < BOARD_SIZE; x++) {
-            for (int y = 0; y < BOARD_SIZE; y++) {
-                // traverse every field
-                FieldState c = board[x][y];
-                // if we have a stone, check if its the start of a five row
-                if(c.equals(FieldState.EMTPY)) continue;
-                for (int dx = -1; dx <= 1; dx++) {
-                    for (int dy = -1; dy <= 1; dy++) {
-                        if(dx == 0 && dy == 0) continue;
-                        if(_fiveInARow(c, x, y, dx, dy, 1)) return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean _fiveInARow(FieldState color, int x, int y, int dx, int dy, int n){
-        if(n == 5) return true;
-        x = x+dx;
-        y = y+dy;
-        n = n+1;
-        if(x >= BOARD_SIZE || x < 0 || y >= BOARD_SIZE || y < 0)
-            return false;
-        if(!board[x][y].equals(color)) return false;
-        return _fiveInARow(color, x, y, dx, dy, n);
     }
 
     public String getStringRepresentation(){
@@ -249,10 +236,10 @@ public class GameLogic {
                 return false;
             }
         }else if(this.getGameState().equals(GameState.ColorPick)){
-            if(option.equals("a")){
+            if(option.equals(WHITE)){
                 // dont change color
                 this.setGameState(GameState.TurnPlayer1);
-            }else if(option.equals("b")){
+            }else if(option.equals(BLACK)){
                 // change color
                 this.player1Color = "black";
                 this.player2Color = "white";
@@ -265,6 +252,35 @@ public class GameLogic {
         return true;
     }
 
+    private boolean playerHasWon() {
+        for (int x = 0; x < BOARD_SIZE; x++) {
+            for (int y = 0; y < BOARD_SIZE; y++) {
+                // traverse every field
+                FieldState c = board[x][y];
+                // if we have a stone, check if its the start of a five row
+                if(c.equals(FieldState.EMTPY)) continue;
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dy = -1; dy <= 1; dy++) {
+                        if(dx == 0 && dy == 0) continue;
+                        if(_fiveInARow(c, x, y, dx, dy, 1)) return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean _fiveInARow(FieldState color, int x, int y, int dx, int dy, int n){
+        if(n == 5) return true;
+        x = x+dx;
+        y = y+dy;
+        n = n+1;
+        if(x >= BOARD_SIZE || x < 0 || y >= BOARD_SIZE || y < 0)
+            return false;
+        if(!board[x][y].equals(color)) return false;
+        return _fiveInARow(color, x, y, dx, dy, n);
+    }
+
 
     public GameState getGameState() {
         return myState;
@@ -272,6 +288,7 @@ public class GameLogic {
 
     public void setGameState(GameState gameState) {
         pcs.firePropertyChange("GameState", getGameState(), gameState);
+        this.myState.prev = gameState;
         this.myState = gameState;
     }
 
