@@ -107,7 +107,7 @@ public class GameLogic {
                 if(color.equals(Field.White) && this.whiteCounter <= 1 ||
                     color.equals(Field.Black) && this.blackCoutner <= 2)
                 {
-                    this.board.setField(color, x, y);
+                    setField(color, x, y);  
                     if(color.equals(Field.White)){
                         this.whiteCounter++;
                     }else{
@@ -122,7 +122,7 @@ public class GameLogic {
                 break;
             case AwnserA:
                 if(color.equals(Field.White)){
-                    this.board.setField(color, x, y);
+                    setField(color, x, y);
                     finishTurn();
                 }else{
                     return false;
@@ -137,7 +137,7 @@ public class GameLogic {
                     }else{
                         this.blackCoutner++;
                     }
-                    this.board.setField(color, x, y);
+                    setField(color, x, y);
                     if(this.blackCoutner + this.whiteCounter == 2){
                         finishTurn();
                     }
@@ -147,7 +147,7 @@ public class GameLogic {
                 break;
             case TurnPlayer1:
             case TurnPlayer2:
-                this.board.setField(color, x, y);
+                setField(color, x, y);
                 finishTurn();
                 break;
             default:
@@ -289,6 +289,12 @@ public class GameLogic {
         pcs.firePropertyChange("GameState", getGameState(), gameState);
         this.myState = gameState;
         this.prev = gameState;
+    }
+
+    private void setField(Field c, int x, int y){
+        Field old = this.board.getField(x, y);
+        this.board.setField(c, x, y);
+        this.pcs.firePropertyChange("Board", c, old);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener pcl) {

@@ -17,20 +17,30 @@ public class Main {
 	    game = new GameLogic();
 	    scanner = new Scanner(System.in);
 	    stop = false;
+        game.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if(evt.getPropertyName().equals("Board")){
+                    System.out.println("Current Game: ");
+                    System.out.println(game.getStringRepresentation());
+                    System.out.println("\n\n");
+                }
 
-        playRandomGame();
+            }
+        });
+        playRandomGame(game);
 
     }
 
-    private static void playRandomGame(){
-        GameLogic game = new GameLogic();
+    private static void playRandomGame(GameLogic _game){
+        GameLogic game = _game;
         game.putStone(Field.Black, 1, 1);
         game.putStone(Field.Black, 1, 2);
         game.putStone(Field.White, 5, 5);
         //game.putStone(FieldState.WHITE, 6, 6);
         game.makeDecision("a");
         game.putStone(Field.White, 5, 6);
-        System.out.println(game.getStringRepresentation());
+        //System.out.println(game.getStringRepresentation());
 
         Field c = Field.White;
         while(!game.getGameState().equals(GameLogic.GameState.ShowWinner)){
@@ -43,7 +53,7 @@ public class Main {
             }while (game.putStone(c, x, y));
         }
 
-        System.out.println(game.getStringRepresentation());
+        //System.out.println(game.getStringRepresentation());
         System.out.println(game.getCurrentPlayer());
     }
 
