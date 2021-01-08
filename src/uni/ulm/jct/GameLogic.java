@@ -190,39 +190,18 @@ public class GameLogic {
         this.currentPlayer = (this.currentPlayer.equals(PLAYER1)) ? PLAYER2 : PLAYER1;
         this.blackCoutner = 0;
         this.whiteCounter = 0;
-        // System.out.println("Turn finished, " + ((currentPlayer == 1) ? "Player 1" : "Player 2") + " is now playing, mode " + getGameState());
-
-
     }
 
-    public String getStringRepresentation(){
-        String out = "";
-        for(int x = 0; x < BOARD_SIZE; x++){
-            for (int y = 0; y < BOARD_SIZE; y++) {
-                switch (board.getField(x, y)){
-                    case White:
-                        out += "o";
-                        break;
-                    case Black:
-                        out += "x";
-                        break;
-                    case Empty:
-                        out += ".";
-                        break;
-                }
-            }
-            out += "\n";
-        }
-        return out;
-    }
 
     public boolean makeDecision(String option){
         if(this.getGameState().equals(GameState.Swap2Question)){
             if(option.equals("a")){
-                this.setGameState(GameState.AwnserA);
-            }else if(option.equals("b")){
                 this.player1Color = BLACK;
                 this.player2Color = WHITE;
+                this.setGameState(GameState.AwnserA);
+            }else if(option.equals("b")){
+                this.player1Color = WHITE;
+                this.player2Color = BLACK;
                 this.setGameState(GameState.AwnserB);
             }else if(option.equals("c")){
                 this.setGameState(GameState.AwnserC);
@@ -232,7 +211,8 @@ public class GameLogic {
             }
         }else if(this.getGameState().equals(GameState.ColorPick)){
             if(option.equals(WHITE)){
-                // dont change color
+                this.player1Color = WHITE;
+                this.player2Color = BLACK;
                 this.setGameState(GameState.TurnPlayer1);
             }else if(option.equals(BLACK)){
                 // change color
@@ -295,6 +275,39 @@ public class GameLogic {
         Field old = this.board.getField(x, y);
         this.board.setField(c, x, y);
         this.pcs.firePropertyChange("Board", c, old);
+    }
+
+    public String getPlayer1Color(){
+        return player1Color;
+    }
+
+    public String getPlayer2Color(){
+        return player2Color;
+    }
+
+    public String getStringRepresentation(){
+        String out = "";
+        for(int x = 0; x < BOARD_SIZE; x++){
+            for (int y = 0; y < BOARD_SIZE; y++) {
+                switch (board.getField(x, y)){
+                    case White:
+                        out += "o";
+                        break;
+                    case Black:
+                        out += "x";
+                        break;
+                    case Empty:
+                        out += ".";
+                        break;
+                }
+            }
+            out += "\n";
+        }
+        return out;
+    }
+
+    public String getWinner() {
+        return prev.getPlayer();
     }
 
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
