@@ -1,14 +1,13 @@
 package uni.ulm.jct;
 
+import uni.ulm.jct.gomoku.Field;
+import uni.ulm.jct.gomoku.GameLogic;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.sql.SQLOutput;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.stream.IntStream;
 
 public class Main {
-    
     public static GameLogic game;
     public static Scanner scanner;
     public static boolean running;

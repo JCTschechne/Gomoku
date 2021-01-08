@@ -1,4 +1,4 @@
-package uni.ulm.jct;
+package uni.ulm.jct.gomoku;
 
 public enum Field {
     Black,

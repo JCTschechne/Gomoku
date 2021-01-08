@@ -1,4 +1,4 @@
-package uni.ulm.jct;
+package uni.ulm.jct.gomoku;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

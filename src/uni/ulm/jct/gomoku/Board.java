@@ -1,6 +1,6 @@
-package uni.ulm.jct;
+package uni.ulm.jct.gomoku;
 
-public class Board {
+class Board {
     private int boardSize;
     private Field[][] fields;
 
