@@ -28,9 +28,9 @@ public class Main {
             switch (game.getGameState()){
                 case Opener -> opener();
                 case Swap2Question -> swap2Question();
-                case AwnserA -> answerA();
-                case AwnserB -> answerB();
-                case AwnserC -> answerC();
+                case AnswerA -> answerA();
+                case AnswerB -> answerB();
+                case AnswerC -> answerC();
                 case ColorPick -> colorPick();
                 case TurnPlayer1 -> turnPlayer1();
                 case TurnPlayer2 -> turnPlayer2();

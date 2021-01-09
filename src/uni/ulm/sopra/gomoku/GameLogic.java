@@ -24,19 +24,19 @@ public class GameLogic {
                 return PLAYER2;
             }
         },
-        AwnserA{
+        AnswerA {
             @Override
             public String getPlayer() {
                 return PLAYER2;
             }
         },
-        AwnserB {
+        AnswerB {
             @Override
             public String getPlayer() {
                 return PLAYER2;
             }
         },
-        AwnserC {
+        AnswerC {
             @Override
             public String getPlayer() {
                 return PLAYER2;
@@ -79,11 +79,9 @@ public class GameLogic {
     private GameState prev = null;
     private String player1Color;
     private String player2Color;
-    // 1 => Palyer 1, 2 => Player2
-    private String currentPlayer;
 
     private int whiteCounter;
-    private int blackCoutner;
+    private int blackCounter;
 
 
     public GameLogic(){
@@ -92,8 +90,7 @@ public class GameLogic {
         this.player1Color = BLACK;
         this.player2Color = WHITE;
         this.setGameState(GameState.Opener);
-        this.currentPlayer = PLAYER1;
-        this.blackCoutner = 0;
+        this.blackCounter = 0;
         this.whiteCounter = 0;
     }
 
@@ -105,22 +102,22 @@ public class GameLogic {
         switch(this.getGameState()){
             case Opener:
                 if(color.equals(Field.White) && this.whiteCounter <= 1 ||
-                    color.equals(Field.Black) && this.blackCoutner <= 2)
+                    color.equals(Field.Black) && this.blackCounter <= 2)
                 {
                     setField(color, x, y);  
                     if(color.equals(Field.White)){
                         this.whiteCounter++;
                     }else{
-                        this.blackCoutner++;
+                        this.blackCounter++;
                     }
-                    if(this.blackCoutner + this.whiteCounter == 3) {
+                    if(this.blackCounter + this.whiteCounter == 3) {
                         finishTurn();
                     }
                 }else{
                     return false;
                 }
                 break;
-            case AwnserA:
+            case AnswerA:
                 if(color.equals(Field.White)){
                     setField(color, x, y);
                     finishTurn();
@@ -128,17 +125,17 @@ public class GameLogic {
                     return false;
                 }
                 break;
-            case AwnserC:
+            case AnswerC:
                 if(color.equals(Field.White) && this.whiteCounter <= 1 ||
-                        color.equals(Field.Black) && this.blackCoutner <= 1)
+                        color.equals(Field.Black) && this.blackCounter <= 1)
                 {
                     if(color.equals(Field.White)){
                         this.whiteCounter++;
                     }else{
-                        this.blackCoutner++;
+                        this.blackCounter++;
                     }
                     setField(color, x, y);
-                    if(this.blackCoutner + this.whiteCounter == 2){
+                    if(this.blackCounter + this.whiteCounter == 2){
                         finishTurn();
                     }
                 }else{
@@ -162,11 +159,11 @@ public class GameLogic {
             case Opener:
                 this.setGameState(GameState.Swap2Question);
                 break;
-            case AwnserA:
-            case AwnserB:
+            case AnswerA:
+            case AnswerB:
                 this.setGameState(GameState.TurnPlayer1);
                 break;
-            case AwnserC:
+            case AnswerC:
                 this.setGameState(GameState.ColorPick);
                 break;
             case TurnPlayer1:
@@ -184,11 +181,10 @@ public class GameLogic {
                 }
                 break;
             default:
-                System.err.println("Unhandelt state change!");
+                System.err.println("Unhandled state change!");
                 break;
         }
-        this.currentPlayer = (this.currentPlayer.equals(PLAYER1)) ? PLAYER2 : PLAYER1;
-        this.blackCoutner = 0;
+        this.blackCounter = 0;
         this.whiteCounter = 0;
     }
 
@@ -199,17 +195,17 @@ public class GameLogic {
                 case "a" -> {
                     this.player1Color = BLACK;
                     this.player2Color = WHITE;
-                    this.setGameState(GameState.AwnserA);
+                    this.setGameState(GameState.AnswerA);
                 }
                 case "b" -> {
                     this.player1Color = WHITE;
                     this.player2Color = BLACK;
-                    this.setGameState(GameState.AwnserB);
+                    this.setGameState(GameState.AnswerB);
                     finishTurn();
                 }
-                case "c" -> this.setGameState(GameState.AwnserC);
+                case "c" -> this.setGameState(GameState.AnswerC);
                 default -> {
-                    System.err.println("Option not avaible");
+                    System.err.println("Option not available");
                     return false;
                 }
             }
@@ -224,7 +220,7 @@ public class GameLogic {
                 this.player2Color = WHITE;
                 this.setGameState(GameState.TurnPlayer1);
             }else{
-                System.err.println("Option not avaible");
+                System.err.println("Option not available");
                 return false;
             }
         }
