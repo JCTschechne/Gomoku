@@ -1,4 +1,4 @@
-package uni.ulm.jct.gomoku;
+package uni.ulm.sopra.gomoku;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -203,6 +203,7 @@ public class GameLogic {
                 this.player1Color = WHITE;
                 this.player2Color = BLACK;
                 this.setGameState(GameState.AwnserB);
+                finishTurn();
             }else if(option.equals("c")){
                 this.setGameState(GameState.AwnserC);
             }else{
@@ -210,11 +211,11 @@ public class GameLogic {
                 return false;
             }
         }else if(this.getGameState().equals(GameState.ColorPick)){
-            if(option.equals(WHITE)){
+            if(option.equals("a")){
                 this.player1Color = WHITE;
                 this.player2Color = BLACK;
                 this.setGameState(GameState.TurnPlayer1);
-            }else if(option.equals(BLACK)){
+            }else if(option.equals("b")){
                 // change color
                 this.player1Color = BLACK;
                 this.player2Color = WHITE;
@@ -266,9 +267,10 @@ public class GameLogic {
     }
 
     public void setGameState(GameState gameState) {
-        pcs.firePropertyChange("GameState", getGameState(), gameState);
+        this.prev = getGameState();
         this.myState = gameState;
-        this.prev = gameState;
+        pcs.firePropertyChange("GameState", getGameState(), gameState);
+
     }
 
     private void setField(Field c, int x, int y){

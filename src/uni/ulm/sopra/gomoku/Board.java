@@ -1,4 +1,4 @@
-package uni.ulm.jct.gomoku;
+package uni.ulm.sopra.gomoku;
 
 class Board {
     private int boardSize;

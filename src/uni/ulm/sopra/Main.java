@@ -1,7 +1,7 @@
-package uni.ulm.jct;
+package uni.ulm.sopra;
 
-import uni.ulm.jct.gomoku.Field;
-import uni.ulm.jct.gomoku.GameLogic;
+import uni.ulm.sopra.gomoku.Field;
+import uni.ulm.sopra.gomoku.GameLogic;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -46,13 +46,13 @@ public class Main {
     }
 
     private static void showWinner() {
-        System.out.println("Player " + game.getWinner() + "has won the game! (Press enter to exit)");
+        System.out.println(game.getWinner() + " has won the game! (Press enter to exit)");
         scanner.nextLine();
         running = false;
     }
 
     private static void turnPlayer2() {
-        System.out.println("Player2, place a stone on the board");
+        System.out.println(player2Name() + " , place a stone on the board");
         if(game.getPlayer2Color().equals(GameLogic.BLACK)){
             placeBlackStone();
         }else{
@@ -61,7 +61,7 @@ public class Main {
     }
 
     private static void turnPlayer1() {
-        System.out.println("Player1, place a stone on the board");
+        System.out.println(player1Name() + ", place a stone on the board");
         if(game.getPlayer1Color().equals(GameLogic.BLACK)){
             placeBlackStone();
         }else{
@@ -94,6 +94,32 @@ public class Main {
         placeWhiteStone();
     }
 
+    private static void opener(){
+        System.out.println(game.getStringRepresentation());
+        System.out.println("Player 1, place a white and 2 black stones");
+        placeBlackStone();
+        placeBlackStone();
+        placeWhiteStone();
+    }
+
+    private static void swap2Question(){
+        System.out.println("(Swap2Question) Player 2 , choose one of the following options: \n" +
+                "a) Chose white as your color, and place another white stone.\n" +
+                "b) Chose black as your color, your term is finished.\n" +
+                "c) Let Player 1 decide the color, and place another black and white stone.\n");
+        System.out.print("-> ");
+        String awnser = scanner.nextLine().strip();
+        game.makeDecision(awnser);
+    }
+
+    private static String player1Name(){
+        return "Player 1 (" + game.getPlayer1Color() + ")";
+    }
+
+    private static String player2Name(){
+        return "Player 2 (" + game.getPlayer2Color() + ")";
+    }
+
     private static void playRandomGame(GameLogic _game){
         GameLogic game = _game;
         game.putStone(Field.Black, 1, 1);
@@ -117,24 +143,6 @@ public class Main {
 
         //System.out.println(game.getStringRepresentation());
         System.out.println(game.getCurrentPlayer());
-    }
-
-    private static void opener(){
-        System.out.println(game.getStringRepresentation());
-        System.out.println("Player 1, place a white and 2 black stones");
-        placeBlackStone();
-        placeBlackStone();
-        placeWhiteStone();
-    }
-
-    private static void swap2Question(){
-        System.out.println("(Swap2Question) Player 2, choose one of the following options: \n" +
-                "a) \n" +
-                "b) \n" +
-                "c) \n");
-        System.out.print("-> ");
-        String awnser = scanner.nextLine().strip();
-        game.makeDecision(awnser);
     }
 
     private static void placeBlackStone(){
