@@ -122,10 +122,8 @@ public class Main {
         game.putStone(Field.Black, 1, 1);
         game.putStone(Field.Black, 1, 2);
         game.putStone(Field.White, 5, 5);
-        //game.putStone(FieldState.WHITE, 6, 6);
         game.makeDecision("a");
         game.putStone(Field.White, 5, 6);
-        //System.out.println(game.getStringRepresentation());
 
         Field c = Field.White;
         while(!game.getGameState().equals(GameLogic.GameState.ShowWinner)){
