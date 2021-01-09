@@ -3,8 +3,6 @@ package uni.ulm.sopra;
 import uni.ulm.sopra.gomoku.Field;
 import uni.ulm.sopra.gomoku.GameLogic;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Scanner;
 
 public class Main {
@@ -17,14 +15,11 @@ public class Main {
 	    scanner = new Scanner(System.in);
 	    running = true;
 	    
-        game.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if(evt.getPropertyName().equals("Board")){
-                    System.out.println("Current Game: ");
-                    System.out.println(game.getStringRepresentation());
-                    System.out.println("\n\n");
-                }
+        game.addPropertyChangeListener(evt -> {
+            if(evt.getPropertyName().equals("Board")){
+                System.out.println("Current Game: ");
+                System.out.println(game.getStringRepresentation());
+                System.out.println("\n\n");
             }
         });
         //playRandomGame(game);
@@ -33,9 +28,9 @@ public class Main {
             switch (game.getGameState()){
                 case Opener -> opener();
                 case Swap2Question -> swap2Question();
-                case AwnserA -> awnserA();
-                case AwnserB -> awnserB();
-                case AwnserC -> awnserC();
+                case AwnserA -> answerA();
+                case AwnserB -> answerB();
+                case AwnserC -> answerC();
                 case ColorPick -> colorPick();
                 case TurnPlayer1 -> turnPlayer1();
                 case TurnPlayer2 -> turnPlayer2();
@@ -70,26 +65,27 @@ public class Main {
     }
 
     private static void colorPick() {
-        System.out.println("(ColorPick) Player1, you get the option to choose you stone color:\n" +
-                "a) Black\n" +
-                "b) White");
+        System.out.println("""
+                (ColorPick) Player1, you get the option to choose you stone color:
+                a) Black
+                b) White""");
         System.out.print("-> ");
-        String awnser = scanner.nextLine().strip();
-        game.makeDecision(awnser);
+        String answer = scanner.nextLine().strip();
+        game.makeDecision(answer);
     }
 
-    private static void awnserC() {
+    private static void answerC() {
         System.out.println("Player2, place a white and black stone, " +
                 "player1 will now get the decision of her/his playing color");
         placeWhiteStone();
         placeBlackStone();
     }
 
-    private static void awnserB() {
+    private static void answerB() {
         System.out.println("Swapping Stones");
     }
 
-    private static void awnserA() {
+    private static void answerA() {
         System.out.println("Player2, place white Stone ");
         placeWhiteStone();
     }
@@ -103,13 +99,15 @@ public class Main {
     }
 
     private static void swap2Question(){
-        System.out.println("(Swap2Question) Player 2 , choose one of the following options: \n" +
-                "a) Chose white as your color, and place another white stone.\n" +
-                "b) Chose black as your color, your term is finished.\n" +
-                "c) Let Player 1 decide the color, and place another black and white stone.\n");
+        System.out.println("""
+                (Swap2Question) Player 2 , choose one of the following options:\s
+                a) Chose white as your color, and place another white stone.
+                b) Chose black as your color, your term is finished.
+                c) Let Player 1 decide the color, and place another black and white stone.
+                """);
         System.out.print("-> ");
-        String awnser = scanner.nextLine().strip();
-        game.makeDecision(awnser);
+        String answer = scanner.nextLine().strip();
+        game.makeDecision(answer);
     }
 
     private static String player1Name(){
@@ -120,8 +118,7 @@ public class Main {
         return "Player 2 (" + game.getPlayer2Color() + ")";
     }
 
-    private static void playRandomGame(GameLogic _game){
-        GameLogic game = _game;
+    private static void playRandomGame(GameLogic game){
         game.putStone(Field.Black, 1, 1);
         game.putStone(Field.Black, 1, 2);
         game.putStone(Field.White, 5, 5);
@@ -163,7 +160,7 @@ public class Main {
                 int x = Integer.parseInt(cords[0]);
                 int y = Integer.parseInt(cords[1]);
                 valid = game.putStone(c, x, y);
-                if(!valid) System.out.println("A stone is already occupaing this place!");
+                if(!valid) System.out.println("A stone is already occupying this place!");
             }catch(NumberFormatException e){
                 System.out.println("Wrong Format! (Example input: 1,1)");
             }
