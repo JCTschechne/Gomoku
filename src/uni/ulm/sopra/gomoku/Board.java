@@ -1,8 +1,8 @@
 package uni.ulm.sopra.gomoku;
 
 class Board {
-    private int boardSize;
-    private Field[][] fields;
+    private final int boardSize;
+    private final Field[][] fields;
 
     public Board(int size){
         this.fields = new Field[size][size];
