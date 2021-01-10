@@ -3,6 +3,13 @@ package uni.ulm.sopra.gomoku;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+/**
+ * Implements a state machine for the game gomoku regarding the swap2 rules.
+ * At creation, an object will always start with an empty board. The board size
+ * is set at 15*15 tiles. The object awaits input through one of the two methods,
+ * {@link #putStone(Field, int, int) putStone} and {@link #makeDecision(String) makeDecision}.
+ * A state change is always triggered after receiving the necessary input.
+ */
 public class GameLogic {
     public static final String PLAYER1 = "Player1";
     public static final String PLAYER2 = "Player2";
@@ -11,6 +18,9 @@ public class GameLogic {
     public static final String WHITE = "White";
 
 
+    /**
+     * Contains all the possible states of {@link GameLogic}
+     */
     public enum GameState {
         Opener{
             @Override
@@ -67,6 +77,10 @@ public class GameLogic {
             }
         };
 
+        /**
+         * The player who is currently playing
+         * @return One of the two player constants {@link #PLAYER1 PLAYER1}
+         */
         public abstract String getPlayer();
     }
 
@@ -83,7 +97,9 @@ public class GameLogic {
     private int whiteCounter;
     private int blackCounter;
 
-
+    /**
+     * Retruns an GameLogic object.
+     */
     public GameLogic(){
         this.pcs = new PropertyChangeSupport(this);
         this.board = new Board(BOARD_SIZE);
@@ -94,6 +110,17 @@ public class GameLogic {
         this.whiteCounter = 0;
     }
 
+    /**
+     * Try to put a stone on the game board.
+     * The player who is currently activ tries to put a stone on the board.
+     *
+     * @param color Always, Black or White. {@link Field}.
+     * @param x x cordinate from the top left.
+     * @param y y coordinat from the top left.
+     * @return true if the input as accepted. false when the position is already
+     * occupied or the object is not awaiting a putStone input.
+     *
+     */
     public boolean putStone(Field color, int x, int y){
         if (this.board.getField(x,y) != Field.Empty){
             return false;
@@ -154,6 +181,10 @@ public class GameLogic {
         return true;
     }
 
+    /**
+     * called to finish a turn.
+     * Is doing all the state changes associated with a new turn. Also checks if a player has already won.
+     */
     private void finishTurn(){
         switch (this.getGameState()){
             case Opener:
@@ -188,7 +219,15 @@ public class GameLogic {
         this.whiteCounter = 0;
     }
 
-
+    /**
+     * Make a decision for a question.
+     * In the swap2 rule set, there is one mandatory question for player2 and
+     * an optional for player1, depending on the decision of player2.
+     *
+     * @param option The dicision the player wants to make
+     * @return true if the input was accepted. false if not. unaccepted doesnt
+     * changes the state of the object
+     */
     public boolean makeDecision(String option){
         if(this.getGameState().equals(GameState.Swap2Question)){
             switch (option) {
@@ -227,6 +266,11 @@ public class GameLogic {
         return true;
     }
 
+    /**
+     * processes the board and searches for a winning condition.
+     * A winning condition is 5 Stones of the same color in a row (vertical, horizontal, diagonall).
+     * @return true if we fund a valid row and we have a winner, false if not and the game will continue.
+     */
     private boolean playerHasWon() {
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
@@ -245,6 +289,16 @@ public class GameLogic {
         return false;
     }
 
+    /**
+     * helper method to claculate if we have 5 stones in a row of the same color in a given direction on the board
+     * @param color the stone color we want to check
+     * @param x old position
+     * @param y old position
+     * @param dx direction x
+     * @param dy direction y
+     * @param n how many stones did we already succesfully process
+     * @return true if we reached n == 5, we found five stones in a row
+     */
     private boolean _fiveInARow(Field color, int x, int y, int dx, int dy, int n){
         if(n == 5) return true;
         x = x+dx;
@@ -257,35 +311,68 @@ public class GameLogic {
     }
 
 
+    /**
+     * The current game state
+     * @return a game state
+     */
     public GameState getGameState() {
         return myState;
     }
 
+    /**
+     * the active player
+     * @return {@link #PLAYER1 Player1} or {@link #PLAYER2 Player2}
+     */
     public String getCurrentPlayer(){
         return this.getGameState().getPlayer();
     }
 
-    public void setGameState(GameState gameState) {
+    /**
+     * make a state change and triggers a property change event.
+     * @param gameState the next state
+     */
+    private void setGameState(GameState gameState) {
         this.prev = getGameState();
         this.myState = gameState;
         pcs.firePropertyChange("GameState", getGameState(), gameState);
 
     }
 
+    /**
+     * puts a stone on the board and triggers a property change event.
+     * @param c color of the stone
+     * @param x x position
+     * @param y y position
+     */
     private void setField(Field c, int x, int y){
         Field old = this.board.getField(x, y);
         this.board.setField(c, x, y);
         this.pcs.firePropertyChange("Board", c, old);
     }
 
+    /**
+     * the color play 1 is playing.
+     * Only usefull after a player has choosen a color.
+     * @return Black or white
+     */
     public String getPlayer1Color(){
         return player1Color;
     }
 
+    /**
+     * the color player 2 is playing.
+     * Only usefull after a player has choosen a color.
+     * @return Black or White
+     */
     public String getPlayer2Color(){
         return player2Color;
     }
 
+    /**
+     * debug method to render to current boad state into a
+     * string representation.
+     * @return a String containing the board (. = Empty, o = white, x = black)
+     */
     public String getStringRepresentation(){
         StringBuilder out = new StringBuilder();
         for(int x = 0; x < BOARD_SIZE; x++){
@@ -301,10 +388,19 @@ public class GameLogic {
         return out.toString();
     }
 
+    /**
+     * returns the player who has won the game.
+     * only usefull after the object is in the ShowWinner state.
+     * @return Player1 or Player2
+     */
     public String getWinner() {
         return prev.getPlayer();
     }
 
+    /**
+     * registers a listener for a propertychangevent.
+     * @param pcl
+     */
     public void addPropertyChangeListener(PropertyChangeListener pcl) {
         pcs.addPropertyChangeListener(pcl);
     }
